@@ -14,29 +14,30 @@ function Login() {
     setIsLoading(true);
 
     // Verificación básica en el cliente (solo para propósitos de demostración)
-    if (username !== "eve.holt@reqres.in" || password !== "cityslicka") {
-      setIsLoading(false);
-      Swal.fire("Error", "Credenciales incorrectas.", "error");
-      return;
-    }
+    // if (username !== "eve.holt@reqres.in" || password !== "cityslicka") {
+    //   setIsLoading(false);
+    //   Swal.fire("Error", "Credenciales incorrectas.", "error");
+    //   return;
+    // }
 
-    fetch("https://reqres.in/api/login", {
+    fetch("http://127.0.0.1:8000/api/login/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: username,
+        username: username,
         password: password,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         setIsLoading(false);
-        if (data.token) {
-          localStorage.setItem("authToken", data.token);
+        if (data.access) {
+          localStorage.setItem("authToken", data.access);
           navigate("/home");
         } else {
+          console.log(data)
           Swal.fire("Error", "Error en el inicio de sesión.", "error");
         }
       })
@@ -54,7 +55,7 @@ function Login() {
         <div className="mb-3">
           <label className="form-label">Usuario (email)</label>
           <input
-            type="email" // Cambiamos a tipo 'email' para validación básica
+            type="text" // Cambiamos a tipo 'email' para validación básica
             className="form-control"
             value={username}
             onChange={(e) => setUsername(e.target.value)}

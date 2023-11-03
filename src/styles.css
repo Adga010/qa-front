@@ -1,0 +1,21 @@
+.container-principal {
+    display: flex;
+    flex-direction: row;  /* Horizontal layout */
+    min-height: 100vh;
+    /* padding: 10px; */
+}
+
+/* Sidebar styles */
+.d-flex.flex-column.flex-shrink-0.p-3.bg-light {
+    flex-shrink: 0;  /* No reduce its size */
+    width: 280px;  /* Fixed width */
+    overflow-y: auto;  /* In case of overflow content */
+    margin-right: 20px; /* Ajusta este valor según lo que necesites */
+
+}
+/* Content area styles (you might need to add this class to your content area in the React component) */
+.contenido-principal {
+    padding-right: 20px;  /* Ajusta el valor según lo necesites */
+    flex: 1;  /* Takes up the remaining space */
+    overflow-y: auto;  /* Scroll if the content is too long */
+}
