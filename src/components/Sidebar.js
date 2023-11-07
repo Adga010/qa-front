@@ -1,54 +1,89 @@
-import '../styles.css';
-import { useNavigate } from "react-router-dom";
-import { FaHome, FaDatabase, FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBug } from '@fortawesome/free-solid-svg-icons';
+import "../styles.css";
+import React, { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import {
+//   FaHome,
+//   FaDatabase,
+//   FaUser,
+//   FaCog,
+//   FaSignOutAlt,
+// } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleRight, faBook, faBug } from "@fortawesome/free-solid-svg-icons";
 
 function Sidebar() {
+  const [isNavCollapsed, setIsNavCollapsed] = useState(true);
 
-    const navigate = useNavigate();
+  const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
 
-    const handleLogout = () => {
-        localStorage.removeItem("authToken");
-        navigate("/");
-    };
-
-
-    return (
-        <div className="d-flex flex-column flex-shrink-0 p-3 bg-light" style={{ width: '280px' }}>
-            <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-                {/* Aquí puedes incluir tu propio SVG o eliminar esta parte si no la necesitas */}
-                <span className="fs-4">Sidebar</span>
+  return (
+    <div id="layoutSidenav_nav">
+      <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu">
+          <div class="nav">
+            <div class="sb-sidenav-menu-heading">Core</div>
+            <a class="nav-link" href="index.html">
+              <div class="sb-nav-link-icon">
+                <i class="fas fa-tachometer-alt"></i>
+                {/* <FontAwesomeIcon icon={faBook} />{" "} */}
+              </div>
+              Dashboard
             </a>
-            <hr />
-            <ul className="nav nav-pills flex-column mb-auto">
-                <li className="nav-item">
-                    <a href="home" className="nav-link" aria-current="page">
-                        <FaHome className="me-2" /> Home
-                    </a>
-                </li>
-                <li className="nav-item">
-                    <a href="list-bug" className="nav-link" aria-current="page">
-                        <FontAwesomeIcon icon={faBug} /> Reporte de Bugs
-                    </a>
-                </li>
-                {/* ... Aquí irían el resto de tus links ... */}
-            </ul>
-            <hr />
-            <div className="dropdown">
-                <a href="#" className="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
-                    <strong>mdo</strong>
+            <div class="sb-sidenav-menu-heading">Interface</div>
+            <button
+              className={`nav-link ${isNavCollapsed ? "collapsed" : ""}`}
+              onClick={handleNavCollapse}
+              aria-expanded={!isNavCollapsed}
+              aria-controls="collapseLayouts"
+            >
+              <div className="sb-nav-link-icon">
+                <FontAwesomeIcon icon={faBug} />{" "}
+                {/* This is an example icon, replace with your own choice */}
+              </div>
+              Reporte de Bugs
+              <FontAwesomeIcon
+                icon={faAngleRight}
+                className={`ms-auto ${isNavCollapsed ? "" : "rotate-icon"}`} // You will add CSS for the rotate-icon class
+              />
+            </button>
+            <div
+              className={`collapse ${!isNavCollapsed ? "show" : ""}`}
+              id="collapseLayouts"
+              aria-labelledby="headingOne"
+              data-bs-parent="#sidenavAccordion"
+            >
+              <nav class="sb-sidenav-menu-nested nav">
+                <a class="nav-link" href="list-bug">
+                  Listado de Bugs
                 </a>
-                <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                    <li><a className="dropdown-item" href="#">Perfil</a></li>
-                    <li><a className="dropdown-item" href="#">Configuración</a></li>
-                    <li><a className="dropdown-item" href="#" onClick={handleLogout}>Cerrar sesión</a></li>
-                </ul>
-
+                <a class="nav-link" href="report-bug">
+                  Reporta un Bug
+                </a>
+              </nav>
             </div>
+
+            <div class="sb-sidenav-menu-heading">Addons</div>
+            <a class="nav-link" href="charts.html">
+              <div class="sb-nav-link-icon">
+                <i class="fas fa-chart-area"></i>
+              </div>
+              Charts
+            </a>
+            <a class="nav-link" href="tables.html">
+              <div class="sb-nav-link-icon">
+                <i class="fas fa-table"></i>
+              </div>
+              Tables
+            </a>
+          </div>
         </div>
-    );
+        <div class="sb-sidenav-footer">
+          <div class="small">Logged in as:</div>
+          Start CDN
+        </div>
+      </nav>
+    </div>
+  );
 }
 
 export default Sidebar;

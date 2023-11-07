@@ -1,24 +1,24 @@
-// src/components/Login.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); // Maintained as 'username'
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Para manejar el estado de carga
+  const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Verificación básica en el cliente (solo para propósitos de demostración)
-    // if (username !== "eve.holt@reqres.in" || password !== "cityslicka") {
-    //   setIsLoading(false);
-    //   Swal.fire("Error", "Credenciales incorrectas.", "error");
-    //   return;
-    // }
+    // ...rest of your submit logic
+
+    // After your login logic:
+    // setIsLoading(false);
+    // if login is successful
+    // navigate('/home');
 
     fetch("http://127.0.0.1:8000/api/login/", {
       method: "POST",
@@ -30,14 +30,20 @@ function Login() {
         password: password,
       }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          return response.json();
+        }
+      })
       .then((data) => {
         setIsLoading(false);
         if (data.access) {
           localStorage.setItem("authToken", data.access);
           navigate("/home");
         } else {
-          console.log(data)
+          console.log(data);
           Swal.fire("Error", "Error en el inicio de sesión.", "error");
         }
       })
@@ -49,33 +55,99 @@ function Login() {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Iniciar sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Usuario (email)</label>
-          <input
-            type="text" // Cambiamos a tipo 'email' para validación básica
-            className="form-control"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Contraseña</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary" disabled={isLoading}>
-          {isLoading ? "Iniciando..." : "Iniciar sesión"}
-        </button>
-      </form>
+    <div id="layoutAuthentication">
+      <div id="layoutAuthentication_content">
+        <main>
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-lg-5">
+                <div className="card shadow-lg border-0 rounded-lg mt-5">
+                  <div className="card-header">
+                    <h3 className="text-center font-weight-light my-4">
+                      Login
+                    </h3>
+                  </div>
+                  <div className="card-body">
+                    <form onSubmit={handleSubmit}>
+                      <div className="form-floating mb-3">
+                        <input
+                          className="form-control"
+                          id="inputEmail"
+                          type="text"
+                          placeholder="name@example.com"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          required
+                        />
+                        <label htmlFor="inputEmail">Email address</label>
+                      </div>
+                      <div className="form-floating mb-3">
+                        <input
+                          className="form-control"
+                          id="inputPassword"
+                          type="password"
+                          placeholder="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                        />
+                        <label htmlFor="inputPassword">Password</label>
+                      </div>
+                      <div className="form-check mb-3">
+                        <input
+                          className="form-check-input"
+                          id="inputRememberPassword"
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="inputRememberPassword"
+                        >
+                          Remember Password
+                        </label>
+                      </div>
+                      <div className="d-flex align-items-center justify-content-between mt-4 mb-0">
+                        <a className="small" href="/password">
+                          Forgot Password?
+                        </a>
+                        <button
+                          className="btn btn-primary"
+                          type="submit"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Loading..." : "Login"}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                  <div className="card-footer text-center py-3">
+                    <div className="small">
+                      <a href="/register">Need an account? Sign up!</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+      <div id="layoutAuthentication_footer">
+        <footer className="py-4 bg-light mt-auto">
+          <div className="container-fluid px-4">
+            <div className="d-flex align-items-center justify-content-between small">
+              <div className="text-muted">
+                Copyright &copy; Your Website 2023
+              </div>
+              <div>
+                <a href="/privacy-policy">Privacy Policy</a>
+                <a href="/terms-conditions">Terms & Conditions</a>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
