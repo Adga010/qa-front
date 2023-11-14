@@ -18,6 +18,7 @@ function ListBug() {
   const [error, setError] = useState(null);
   const token = getToken(); // Obtener el token de autenticación
   let navigate = useNavigate();
+  const [load, setload] = useState(false);
 
   const columns = useMemo(
     () => [
@@ -127,6 +128,8 @@ function ListBug() {
   };
 
   useEffect(() => {
+    // Mutar parta volver a cargar.
+    if (load) return;
     const loadData = async () => {
       try {
         const response = await fetch(
@@ -155,12 +158,12 @@ function ListBug() {
     loadData();
 
     // Teardown function para limpiar la instancia de DataTables
-    return () => {};
-  }, [token]);
+  }, [token, load]);
 
   // Función para manejar la eliminación
 
   const deleteBug = async (id) => {
+    setload(true);
     try {
       const response = await fetch(
         `http://127.0.0.1:8000/api/delete-bug/${id}/`,
@@ -178,13 +181,14 @@ function ListBug() {
       }
 
       // Filtrar el estado de bugs para quitar el eliminado
-      const updatedBugs = bugs.filter((bug) => bug.id !== id);
-      setBugs(updatedBugs);
+      // const updatedBugs = bugs.filter((bug) => bug.id != id);
+      // setBugs(updatedBugs);
 
       Swal.fire("Eliminado!", "El registro ha sido eliminado.", "success");
     } catch (err) {
       Swal.fire("Error!", `Error: ${err.message}`, "error");
     }
+    setload(false);
   };
 
   if (error) {
