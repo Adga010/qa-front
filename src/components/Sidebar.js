@@ -1,13 +1,6 @@
 import "../styles.css";
 import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import {
-//   FaHome,
-//   FaDatabase,
-//   FaUser,
-//   FaCog,
-//   FaSignOutAlt,
-// } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faBook, faBug } from "@fortawesome/free-solid-svg-icons";
 
@@ -18,18 +11,21 @@ function Sidebar() {
 
   return (
     <div id="layoutSidenav_nav">
-      <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-        <div class="sb-sidenav-menu">
-          <div class="nav">
-            <div class="sb-sidenav-menu-heading">Core</div>
-            <a class="nav-link" href="index.html">
-              <div class="sb-nav-link-icon">
-                <i class="fas fa-tachometer-alt"></i>
+      <nav
+        className="sb-sidenav accordion sb-sidenav-dark"
+        id="sidenavAccordion"
+      >
+        <div className="sb-sidenav-menu">
+          <div className="nav">
+            <div className="sb-sidenav-menu-heading">Core</div>
+            <a className="nav-link" href="index.html">
+              <div className="sb-nav-link-icon">
+                <i className="fas fa-tachometer-alt"></i>
                 {/* <FontAwesomeIcon icon={faBook} />{" "} */}
               </div>
               Dashboard
             </a>
-            <div class="sb-sidenav-menu-heading">Interface</div>
+            <div className="sb-sidenav-menu-heading">Interface</div>
             <button
               className={`nav-link ${isNavCollapsed ? "collapsed" : ""}`}
               onClick={handleNavCollapse}
@@ -43,7 +39,7 @@ function Sidebar() {
               Reporte de Bugs
               <FontAwesomeIcon
                 icon={faAngleRight}
-                className={`ms-auto ${isNavCollapsed ? "" : "rotate-icon"}`} // You will add CSS for the rotate-icon class
+                className={`ms-auto ${isNavCollapsed ? "" : "rotate-icon"}`} // You will add CSS for the rotate-icon className
               />
             </button>
             <div
@@ -52,33 +48,33 @@ function Sidebar() {
               aria-labelledby="headingOne"
               data-bs-parent="#sidenavAccordion"
             >
-              <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="list-bug">
-                  Listado de Bugs
-                </a>
-                <a class="nav-link" href="report-bug">
-                  Reporta un Bug
-                </a>
+              <nav className="sb-sidenav-menu-nested nav">
+                <Link className="nav-link" to="/list-bug">
+                  Listar Bugs
+                </Link>
+                <Link className="nav-link" to="/report-bug">
+                  Reportar Bug
+                </Link>
               </nav>
             </div>
 
-            <div class="sb-sidenav-menu-heading">Addons</div>
-            <a class="nav-link" href="charts.html">
-              <div class="sb-nav-link-icon">
-                <i class="fas fa-chart-area"></i>
+            <div className="sb-sidenav-menu-heading">Addons</div>
+            <Link className="nav-link" to="/upload-bug">
+              <div className="sb-nav-link-icon">
+                <i className="fas fa-chart-area"></i>
               </div>
-              Charts
-            </a>
-            <a class="nav-link" href="tables.html">
-              <div class="sb-nav-link-icon">
-                <i class="fas fa-table"></i>
+              Carga de Bugs
+            </Link>
+            <a className="nav-link" href="tables.html">
+              <div className="sb-nav-link-icon">
+                <i className="fas fa-table"></i>
               </div>
               Tables
             </a>
           </div>
         </div>
-        <div class="sb-sidenav-footer">
-          <div class="small">Logged in as:</div>
+        <div className="sb-sidenav-footer">
+          <div className="small">Logged in as:</div>
           Start CDN
         </div>
       </nav>

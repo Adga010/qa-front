@@ -1,96 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { getToken } from "../utils/authUtils";
 import withAuth from "../utils/withAuth";
-import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import Swal from "sweetalert2";
 
-const ProtectedFormBug = withAuth(FormBug);
+const ProtectedEditBugForm = withAuth(EditBugForm);
 
-function FormBug() {
-  // Estado inicial para los valores del formulario
-  const token = getToken(); // Obtener el token de autenticación
-  const [formData, setFormData] = useState({
-    fecha: "",
-    status: "",
-    projectName: "",
-    bug: "",
-    area: "",
-    causal: "",
-    severidad: "",
-    enlace: "",
-    encargado: "",
-    reportado: "",
+function EditBugForm() {
+  const token = getToken();
+  const { id } = useParams(); // Obtiene el id desde la URL
+  const [bugData, setBugData] = useState({
+    FECHA: "",
+    STATUS: "",
+    PROJECT_NAME: "",
+    BUG: "",
+    AREA: "",
+    CAUSAL: "",
+    SEVERIDAD: "",
+    ENLACE: "",
+    ENCARGADO: "", // Asegúrate de agregar este campo si es necesario.
   });
+  const navigate = useNavigate();
 
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-
-    // Mapear los nombres de los campos al formato que el servidor espera
-    const dataToSubmit = {
-      FECHA: formData.fecha,
-      STATUS: formData.status,
-      PROJECT_NAME: formData.projectName,
-      BUG: formData.bug,
-      AREA: formData.area,
-      CAUSAL: formData.causal,
-      SEVERIDAD: formData.severidad,
-      ENLACE: formData.enlace,
-      ENCARGADO: formData.encargado,
-      REPORTADO: formData.reportado,
+  useEffect(() => {
+    const fetchBugData = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/update-bug/${id}`,
+          {
+            method: "GET", // Especificar el método puede ser opcional ya que GET es el método por defecto.
+            headers: {
+              Authorization: `Bearer ${getToken()}`, // Asegúrate de que el token se incluya aquí
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok " + response.statusText);
+        }
+        const data = await response.json();
+        setBugData(data);
+      } catch (error) {
+        console.error("Error fetching bug data:", error);
+      }
     };
 
+    fetchBugData();
+  }, [id]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBugData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      // Convertir el objeto dataToSubmit a JSON
-      const body = JSON.stringify(dataToSubmit);
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/report-bug/register",
-        body,
-        config
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/update-bug/${id}`,
+        {
+          method: "PUT", // o 'PATCH' si solo estás actualizando parcialmente
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Asegúrate de que el token se incluya aquí
+          },
+          body: JSON.stringify(bugData),
+        }
       );
-
-      // Muestra un SweetAlert al usuario y restablece los campos
-      Swal.fire({
-        title: "¡Éxito!",
-        text: "Bug registrado con éxito",
-        icon: "success",
-        confirmButtonText: "Ok",
-      });
-
-      // Restablecer el estado de formData
-      setFormData({
-        fecha: "",
-        status: "",
-        projectName: "",
-        bug: "",
-        area: "",
-        causal: "",
-        severidad: "",
-        enlace: "",
-        encargado: "",
-        reportado: "",
-      });
-
-      console.log("Data Submitted", res.data);
-    } catch (err) {
-      console.error(err.response.data);
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un error al registrar el bug",
-        icon: "error",
-        confirmButtonText: "Cerrar",
-      });
+      if (response.ok) {
+        Swal.fire({
+          title: "¡Éxito!",
+          text: "Bug Actualizado con éxito",
+          icon: "success",
+          confirmButtonText: "Ok",
+        });
+        navigate("/list-bug"); // Redirecciona a la lista de bugs
+      } else {
+        console.error("Failed to update bug");
+      }
+    } catch (error) {
+      console.error("Error updating bug:", error);
     }
   };
 
@@ -106,19 +99,20 @@ function FormBug() {
                 <div className="card shadow-lg border-0 rounded-lg mt-5">
                   <div className="card-header">
                     <h3 className="text-center font-weight-light my-3">
-                      Resporte de Novedades.
+                      Actualización de Novedades.
                     </h3>
                     <div className="card-body">
-                      <form onSubmit={onSubmit}>
+                      <form onSubmit={handleSubmit}>
                         <div className="form-floating mb-3">
                           <input
                             className="form-control"
-                            id="inputDate"
                             type="date"
-                            name="fecha"
-                            value={formData.fecha}
-                            onChange={onChange}
+                            name="FECHA"
+                            value={bugData.FECHA}
+                            onChange={handleChange}
                             required
+                            readOnly
+                            style={{ opacity: 0.5 }}
                           />
                           <label htmlFor="inputDate">Fecha</label>
                         </div>
@@ -126,9 +120,9 @@ function FormBug() {
                           <select
                             className="form-select"
                             id="inputStatus"
-                            name="status"
-                            value={formData.status}
-                            onChange={onChange}
+                            name="STATUS"
+                            value={bugData.STATUS}
+                            onChange={handleChange}
                             required
                           >
                             <option value="">Seleccione un estado</option>
@@ -143,9 +137,9 @@ function FormBug() {
                             id="inputProjectName"
                             type="text"
                             placeholder="Nombre del Proyecto"
-                            name="projectName"
-                            value={formData.projectName}
-                            onChange={onChange}
+                            name="PROJECT_NAME"
+                            value={bugData.PROJECT_NAME}
+                            onChange={handleChange}
                             required
                           />
                           <label htmlFor="inputProjectName">Nombre Proyecto</label>
@@ -156,9 +150,9 @@ function FormBug() {
                             id="inputEncargado"
                             type="text"
                             placeholder="Encargado"
-                            name="encargado"
-                            value={formData.encargado}
-                            onChange={onChange}
+                            name="ENCARGADO"
+                            value={bugData.ENCARGADO}
+                            onChange={handleChange}
                             required
                           />
                           <label htmlFor="inputEncargado">Encargado</label>
@@ -169,9 +163,9 @@ function FormBug() {
                             id="inputBugDescription"
                             placeholder="Descripción detallada del error encontrado."
                             // style="height: 100px"
-                            name="bug"
-                            value={formData.bug}
-                            onChange={onChange}
+                            name="BUG"
+                            value={bugData.BUG}
+                            onChange={handleChange}
                             required
                           ></textarea>
                           <label htmlFor="inputBugDescription">
@@ -182,9 +176,9 @@ function FormBug() {
                           <select
                             className="form-select"
                             id="inputArea"
-                            name="area"
-                            value={formData.area}
-                            onChange={onChange}
+                            name="AREA"
+                            value={bugData.AREA}
+                            onChange={handleChange}
                             required
                           >
                             <option value="">Seleccione un área</option>
@@ -201,9 +195,9 @@ function FormBug() {
                           <select
                             className="form-select"
                             id="inputCausal"
-                            name="causal"
-                            value={formData.causal}
-                            onChange={onChange}
+                            name="CAUSAL"
+                            value={bugData.CAUSAL}
+                            onChange={handleChange}
                             required
                           >
                             <option value="">Seleccione un Causal</option>
@@ -219,9 +213,9 @@ function FormBug() {
                           <select
                             className="form-select"
                             id="inputSeverity"
-                            name="severidad"
-                            value={formData.severidad}
-                            onChange={onChange}
+                            name="SEVERIDAD"
+                            value={bugData.SEVERIDAD}
+                            onChange={handleChange}
                             required
                           >
                             <option value="">Seleccione una severidad</option>
@@ -237,9 +231,9 @@ function FormBug() {
                             id="inputLink"
                             type="url"
                             placeholder="http://enlace-a-repositorio-o-herramienta.com"
-                            name="enlace"
-                            value={formData.enlace}
-                            onChange={onChange}
+                            name="ENLACE"
+                            value={bugData.ENLACE}
+                            onChange={handleChange}
                             required
                           />
                           <label htmlFor="inputLink">
@@ -252,7 +246,7 @@ function FormBug() {
                               className="btn btn-primary btn-block"
                               type="submit"
                             >
-                              Report Bug
+                              Actualizar Bug
                             </button>
                           </div>
                         </div>
@@ -266,7 +260,9 @@ function FormBug() {
           <footer className="py-4 bg-light mt-auto">
             <div className="container-fluid px-4">
               <div className="d-flex align-items-center justify-content-between small">
-                <div className="text-muted">Copyright &copy; Your Website 2023</div>
+                <div className="text-muted">
+                  Copyright &copy; Your Website 2023
+                </div>
                 <div>
                   <a href="/privacy-policy">Privacy Policy</a>
                   <a href="/terms-and-conditions">Terms & Conditions</a>
@@ -280,4 +276,4 @@ function FormBug() {
   );
 }
 
-export default ProtectedFormBug;
+export default ProtectedEditBugForm;
