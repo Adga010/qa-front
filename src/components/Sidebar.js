@@ -18,13 +18,13 @@ function Sidebar() {
         <div className="sb-sidenav-menu">
           <div className="nav">
             <div className="sb-sidenav-menu-heading">Core</div>
-            <a className="nav-link" href="index.html">
+            <Link className="nav-link" to="/dashboard-bug">
               <div className="sb-nav-link-icon">
                 <i className="fas fa-tachometer-alt"></i>
                 {/* <FontAwesomeIcon icon={faBook} />{" "} */}
               </div>
               Dashboard
-            </a>
+            </Link>
             <div className="sb-sidenav-menu-heading">Interface</div>
             <button
               className={`nav-link ${isNavCollapsed ? "collapsed" : ""}`}
@@ -65,12 +65,12 @@ function Sidebar() {
               </div>
               Carga de Bugs
             </Link>
-            <a className="nav-link" href="tables.html">
+            <Link className="nav-link" to="/download-bug">
               <div className="sb-nav-link-icon">
                 <i className="fas fa-table"></i>
               </div>
-              Tables
-            </a>
+              Descarga de Bugs
+            </Link>
           </div>
         </div>
         <div className="sb-sidenav-footer">

@@ -89,10 +89,7 @@ function EditBugForm() {
 
   return (
     <div>
-      <Navbar></Navbar>
-      <div id="layoutSidenav">
-        <Sidebar></Sidebar>
-        <div id="layoutSidenav_content">
+
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-6">
@@ -257,22 +254,7 @@ function EditBugForm() {
               </div>
             </div>
           </div>
-          <footer className="py-4 bg-light mt-auto">
-            <div className="container-fluid px-4">
-              <div className="d-flex align-items-center justify-content-between small">
-                <div className="text-muted">
-                  Copyright &copy; Your Website 2023
-                </div>
-                <div>
-                  <a href="/privacy-policy">Privacy Policy</a>
-                  <a href="/terms-and-conditions">Terms & Conditions</a>
-                </div>
-              </div>
-            </div>
-          </footer>
         </div>
-      </div>
-    </div>
   );
 }
 

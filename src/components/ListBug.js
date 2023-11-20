@@ -4,11 +4,12 @@ import { getToken } from "../utils/authUtils";
 import "../styles.css";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
-import "@fortawesome/fontawesome-free/css/all.min.css";
+// import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 import { useTable, usePagination } from "react-table";
 import { Table, Button } from "react-bootstrap";
+import Alert from "./alerts/Alert";
 
 // Este componente está envuelto con la función withAuth para proteger la ruta
 const ProtectedListBug = withAuth(ListBug);
@@ -62,19 +63,30 @@ function ListBug() {
       {
         Header: "Acciones",
         Cell: ({ row }) => (
-          <div>
+          <div className="action-buttons">
             <Button
               variant="primary"
               onClick={() => handleUpdate(row.original.id)}
             >
               <i className="fas fa-edit"></i>
-            </Button>{" "}
-            <Button
+            </Button>
+            {""}
+            <Alert
+              title="¿Estás seguro?"
+              text="¡No podrás revertir esto!"
+              onConfirm={() => handleDelete(row.original.id)}
+              onCancel={() => console.log("Cancelado")}
+              variant="btn-danger" // Clase de Bootstrap para el color rojo
+              className="fas fa-trash" // Clases adicionales que quieras aplicar
+              icon="warning"
+            />
+
+            {/* <Button
               variant="danger"
               onClick={() => handleDelete(row.original.id)}
             >
               <i className="fas fa-trash"></i>
-            </Button>
+            </Button> */}
           </div>
         ),
       },
@@ -110,21 +122,8 @@ function ListBug() {
 
   // Función para manejar la eliminación
   const handleDelete = async (id) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¡No podrás revertir esto!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar!",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Si el usuario confirma, procede con la eliminación
-        deleteBug(id);
-      }
-    });
+    // Si el usuario confirma, procede con la eliminación
+    deleteBug(id);
   };
 
   useEffect(() => {
@@ -184,9 +183,9 @@ function ListBug() {
       // const updatedBugs = bugs.filter((bug) => bug.id != id);
       // setBugs(updatedBugs);
 
-      Swal.fire("Eliminado!", "El registro ha sido eliminado.", "success");
+      // Swal.fire("Eliminado!", "El registro ha sido eliminado.", "success");
     } catch (err) {
-      Swal.fire("Error!", `Error: ${err.message}`, "error");
+      // Swal.fire("Error!", `Error: ${err.message}`, "error");
     }
     setload(false);
   };
@@ -197,144 +196,121 @@ function ListBug() {
 
   return (
     <div>
-      <Navbar />
-      <div id="layoutSidenav">
-        <Sidebar />
-        <div id="layoutSidenav_content">
-          <main>
-            <div className="container-fluid px-4">
-              <h1 className="mt-4">Tables</h1>
-              <ol className="breadcrumb mb-4">
-                <li className="breadcrumb-item">
-                  <a href="index.html">Dashboard</a>
-                </li>
-                <li className="breadcrumb-item active">Tables</li>
-              </ol>
+      <main>
+        <div className="container-fluid px-4">
+          <h1 className="mt-4">Tables</h1>
+          <ol className="breadcrumb mb-4">
+            <li className="breadcrumb-item">
+              <a href="index.html">Dashboard</a>
+            </li>
+            <li className="breadcrumb-item active">Tables</li>
+          </ol>
 
-              <div className="card mb-4">
-                <div className="card-body">
-                  DataTables is a third party plugin that is used to generate
-                  the demo table below. For more information about DataTables,
-                  please visit the
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://datatables.net/"
-                  >
-                    official DataTables documentation
-                  </a>
-                </div>
-              </div>
-              <div className="card mb-4">
-                <div className="card-header">
-                  <i className="fas fa-table me-1"></i>
-                  DataTable Example
-                </div>
-                <div className="card-body">
-                  <Table {...getTableProps()} striped bordered hover>
-                    <thead>
-                      {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                          {headerGroup.headers.map((column) => (
-                            <th {...column.getHeaderProps()}>
-                              {column.render("Header")}
-                            </th>
-                          ))}
-                        </tr>
+          <div className="card mb-4">
+            <div className="card-body">
+              DataTables is a third party plugin that is used to generate the
+              demo table below. For more information about DataTables, please
+              visit the
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://datatables.net/"
+              >
+                official DataTables documentation
+              </a>
+            </div>
+          </div>
+          <div className="card mb-4">
+            <div className="card-header">
+              <i className="fas fa-table me-1"></i>
+              DataTable Example
+            </div>
+            <div className="card-body">
+              <Table {...getTableProps()} striped bordered hover>
+                <thead>
+                  {headerGroups.map((headerGroup) => (
+                    <tr {...headerGroup.getHeaderGroupProps()}>
+                      {headerGroup.headers.map((column) => (
+                        <th {...column.getHeaderProps()}>
+                          {column.render("Header")}
+                        </th>
                       ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                      {page.map((row) => {
-                        prepareRow(row);
-                        return (
-                          <tr {...row.getRowProps()}>
-                            {row.cells.map((cell) => {
-                              return (
-                                <td {...cell.getCellProps()}>
-                                  {cell.render("Cell")}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </Table>
-                  <div className="pagination">
-                    <Button
-                      onClick={() => gotoPage(0)}
-                      disabled={!canPreviousPage}
-                    >
-                      {"<<"}
-                    </Button>{" "}
-                    <Button
-                      onClick={() => previousPage()}
-                      disabled={!canPreviousPage}
-                    >
-                      {"<"}
-                    </Button>{" "}
-                    <Button onClick={() => nextPage()} disabled={!canNextPage}>
-                      {">"}
-                    </Button>{" "}
-                    <Button
-                      onClick={() => gotoPage(pageCount - 1)}
-                      disabled={!canNextPage}
-                    >
-                      {">>"}
-                    </Button>{" "}
-                    <span>
-                      Page{" "}
-                      <strong>
-                        {pageIndex + 1} of {pageOptions.length}
-                      </strong>{" "}
-                    </span>
-                    <span>
-                      | Go to page:{" "}
-                      <input
-                        type="number"
-                        defaultValue={pageIndex + 1}
-                        onChange={(e) => {
-                          const page = e.target.value
-                            ? Number(e.target.value) - 1
-                            : 0;
-                          gotoPage(page);
-                        }}
-                        style={{ width: "50px" }}
-                      />
-                    </span>{" "}
-                    <select
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                      }}
-                    >
-                      {[10, 20, 30, 40, 50].map((pageSize) => (
-                        <option key={pageSize} value={pageSize}>
-                          Show {pageSize}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                    </tr>
+                  ))}
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                  {page.map((row) => {
+                    prepareRow(row);
+                    return (
+                      <tr {...row.getRowProps()}>
+                        {row.cells.map((cell) => {
+                          return (
+                            <td {...cell.getCellProps()}>
+                              {cell.render("Cell")}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+              <div className="pagination">
+                <Button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                  {"<<"}
+                </Button>{" "}
+                <Button
+                  onClick={() => previousPage()}
+                  disabled={!canPreviousPage}
+                >
+                  {"<"}
+                </Button>{" "}
+                <Button onClick={() => nextPage()} disabled={!canNextPage}>
+                  {">"}
+                </Button>{" "}
+                <Button
+                  onClick={() => gotoPage(pageCount - 1)}
+                  disabled={!canNextPage}
+                >
+                  {">>"}
+                </Button>{" "}
+                <span>
+                  Page{" "}
+                  <strong>
+                    {pageIndex + 1} of {pageOptions.length}
+                  </strong>{" "}
+                </span>
+                <span>
+                  | Go to page:{" "}
+                  <input
+                    type="number"
+                    defaultValue={pageIndex + 1}
+                    onChange={(e) => {
+                      const page = e.target.value
+                        ? Number(e.target.value) - 1
+                        : 0;
+                      gotoPage(page);
+                    }}
+                    style={{ width: "50px" }}
+                  />
+                </span>{" "}
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                  }}
+                >
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-          </main>
-          <footer className="py-4 bg-light mt-auto">
-            <div className="container-fluid px-4">
-              <div className="d-flex align-items-center justify-content-between small">
-                <div className="text-muted">
-                  Copyright &copy; Your Website 2023
-                </div>
-                <div>
-                  <a href="/privacy-policy">Privacy Policy</a>
-                  &middot;
-                  <a href="/terms-and-conditions">Terms & Conditions</a>
-                </div>
-              </div>
-            </div>
-          </footer>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
