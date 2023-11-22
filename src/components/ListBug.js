@@ -2,14 +2,11 @@ import React, { useMemo, useState, useEffect } from "react";
 import withAuth from "../utils/withAuth";
 import { getToken } from "../utils/authUtils";
 import "../styles.css";
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
-// import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
-// import Swal from "sweetalert2";
 import { useTable, usePagination } from "react-table";
 import { Table, Button } from "react-bootstrap";
 import Alert from "./alerts/Alert";
+
 
 // Este componente está envuelto con la función withAuth para proteger la ruta
 const ProtectedListBug = withAuth(ListBug);

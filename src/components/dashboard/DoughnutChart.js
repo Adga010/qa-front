@@ -1,8 +1,8 @@
 // PieChart.js
 import React from "react";
-import { Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 
-function PieChart({ data, title }) {
+function DoughnutChart({ data, title }) {
   const options = {
     maintainAspectRatio: false, // Esto permite que el gráfico llene el contenedor
     responsive: true, // Esto hace que el gráfico sea responsivo
@@ -16,14 +16,15 @@ function PieChart({ data, title }) {
       },
     },
   };
+
   return (
     <div>
       <div className="card mb-3">
         <div className="card-header">{title}</div>
         <div className="card-body">
-          <Pie
+          <Doughnut
             data={data}
-            options={({ maintainAspectRatio: false }, { options })}
+            options={({ cutoutPercentage: 50 }, { options })}
             style={{ height: "300px" }}
           />
         </div>
@@ -32,4 +33,4 @@ function PieChart({ data, title }) {
   );
 }
 
-export default PieChart;
+export default DoughnutChart;
