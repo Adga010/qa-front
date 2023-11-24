@@ -9,6 +9,9 @@ import Swal from "sweetalert2";
 import { getToken } from "../../utils/authUtils";
 
 function Dashboard() {
+  // Estado para envolver los graficos.
+  const [showCharts, setShowCharts] = useState(false);
+
   const [pieChartData, setPieChartData] = useState({
     labels: [],
     datasets: [
@@ -150,9 +153,11 @@ function Dashboard() {
       processChartData(response.data, "SEVERIDAD");
       processChartData(response.data, "AREA");
       processChartData(response.data, "PROJECT_NAME");
+      setShowCharts(true); // Mostrar gráficos cuando hay datos
       console.log(response.data);
     } catch (error) {
       console.error(error.response?.data?.detail);
+      setShowCharts(false); // Ocultar gráficos si hay un error
       Swal.fire(
         "Error",
         "No se pudo obtener los datos: " +
@@ -173,22 +178,27 @@ function Dashboard() {
               </h3>
               <div className="card-body">
                 <FilterForm onFilterSubmit={fetchChartData} />
-                <div className="row">
-                  <div className="col-md-6">
-                    <PieChart data={pieChartData} title="Causal" />{" "}
+                {showCharts && ( // Renderizar gráficos sólo si showCharts es true
+                  <div className="row margin-top">
+                    <div className="col-md-6">
+                      <PieChart data={pieChartData} title="Causal" />{" "}
+                    </div>
+                    <div className="col-md-6">
+                      <PieChart data={severityPieChartData} title="Severidad" />{" "}
+                    </div>
+                    <div className="col-md-6">
+                      <DoughnutChart
+                        data={areaDoughnutChartData}
+                        title="Area"
+                      />{" "}
+                      {/* Nuevo gráfico de pastel para el área */}
+                    </div>
+                    <BartChart
+                      data={projectBarChartData}
+                      title="Cantidad de Bug por Proyecto"
+                    ></BartChart>
                   </div>
-                  <div className="col-md-6">
-                    <PieChart data={severityPieChartData} title="Severidad" />{" "}
-                  </div>
-                  <div className="col-md-6">
-                    <DoughnutChart data={areaDoughnutChartData} title="Area" />{" "}
-                    {/* Nuevo gráfico de pastel para el área */}
-                  </div>
-                  <BartChart
-                    data={projectBarChartData}
-                    title="Cantidad de Bug por Proyecto"
-                  ></BartChart>
-                </div>
+                )}
               </div>
             </div>
           </div>
