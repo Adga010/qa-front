@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { getToken } from "../utils/authUtils";
 import withAuth from "../utils/withAuth";
 import axios from "axios";
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
 import Swal from "sweetalert2";
 
 const ProtectedFormBug = withAuth(FormBug);
@@ -55,7 +53,7 @@ function FormBug() {
       // Convertir el objeto dataToSubmit a JSON
       const body = JSON.stringify(dataToSubmit);
       const res = await axios.post(
-        "http://127.0.0.1:8000/api/report-bug/register",
+        "http://127.0.0.1:8000/api/report-bug/register/",
         body,
         config
       );
@@ -84,10 +82,21 @@ function FormBug() {
 
       console.log("Data Submitted", res.data);
     } catch (err) {
-      console.error(err.response.data);
+      console.error(err.response.data); // Esto imprimirá el error completo en la consola para el registro.
+
+      // Puedes seguir imprimiendo el mensaje original de error en la consola si lo deseas:
+      const originalErrorMessage =
+        err.response && err.response.data && err.response.data.PROJECT_NAME
+          ? err.response.data.PROJECT_NAME[0] // Asume que el mensaje es el primer elemento del array
+          : "Hubo un error al registrar el bug";
+      console.error("Error original: ", originalErrorMessage);
+
+      // Mensaje personalizado para la alerta
+      const customErrorMessage = "El Nombre del Proyecto ingresado NO existe.";
+
       Swal.fire({
         title: "Error",
-        text: "Hubo un error al registrar el bug",
+        text: customErrorMessage, // Usa el mensaje personalizado
         icon: "error",
         confirmButtonText: "Cerrar",
       });
@@ -128,8 +137,8 @@ function FormBug() {
                         required
                       >
                         <option value="">Seleccione un estado</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="finalizado">Finalizado</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Finalizado">Finalizado</option>
                       </select>
                       <label htmlFor="inputStatus">Estado</label>
                     </div>
@@ -184,12 +193,12 @@ function FormBug() {
                         required
                       >
                         <option value="">Seleccione un área</option>
-                        <option value="axces">Axces</option>
-                        <option value="gestion del riesgo">
+                        <option value="Axces">Axces</option>
+                        <option value="Gestion del Riesgo">
                           Gestión del Riesgo
                         </option>
-                        <option value="mercadeo">Mercadeo</option>
-                        <option value="transversal">Transversal</option>
+                        <option value="Mercadeo">Mercadeo</option>
+                        <option value="Transversal">Transversal</option>
                       </select>
                       <label htmlFor="inputArea">Area</label>
                     </div>
@@ -203,11 +212,11 @@ function FormBug() {
                         required
                       >
                         <option value="">Seleccione un Causal</option>
-                        <option value="desarrollo">Desarrollo</option>
-                        <option value="analisis">Análisis</option>
-                        <option value="documentacion">Documentación</option>
-                        <option value="testing">Testing</option>
-                        <option value="diseño">Diseño</option>
+                        <option value="Desarrollo">Desarrollo</option>
+                        <option value="Analisis">Análisis</option>
+                        <option value="Documentacion">Documentación</option>
+                        <option value="Testing">Testing</option>
+                        <option value="Diseño">Diseño</option>
                       </select>
                       <label htmlFor="inputCausal">Causal</label>
                     </div>
@@ -221,9 +230,9 @@ function FormBug() {
                         required
                       >
                         <option value="">Seleccione una severidad</option>
-                        <option value="funcional">Funcional</option>
-                        <option value="presentacion">Presentación</option>
-                        <option value="bloqueante">Bloqueante</option>
+                        <option value="Funcional">Funcional</option>
+                        <option value="Presentacion">Presentación</option>
+                        <option value="Bloqueante">Bloqueante</option>
                       </select>
                       <label htmlFor="inputSeverity">Severidad</label>
                     </div>
